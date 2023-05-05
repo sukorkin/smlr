@@ -1,26 +1,40 @@
 package com.example.smlr.service
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicLong
 
 @Service
 class DefaultKeyMapperService: KeyMapperService {
 
-    private val map: MutableMap<String, String> = ConcurrentHashMap()
+    @Autowired
+    lateinit var converter: KeyConverterService
+    private val map: MutableMap<Long, String> = ConcurrentHashMap()
 
-    override fun add(key: String, link: String): KeyMapperService.Add {
-        return if(map.contains(key)) {
-            KeyMapperService.Add.AlreadyExist(key)
-        } else {
-            map[key] = link
-            KeyMapperService.Add.Success(key, link)
-        }
+    val sequence = AtomicLong(10000000L)
+
+    override fun add(link: String): String {
+        val id = sequence.getAndIncrement()
+        val key = converter.idToKey(id)
+        map[id] = link
+        return key
+
+//        return if(map.contains(key)) {
+//            KeyMapperService.Add.AlreadyExist(key)
+//        } else {
+//            map[key] = link
+//            KeyMapperService.Add.Success(key, link)
+//        }
     }
 
-    override fun getLink(key: String): KeyMapperService.Get =
-        if(map.contains(key)) {
-            KeyMapperService.Get.Link(map[key]!!)
+    override fun getLink(key: String): KeyMapperService.Get {
+        val id = converter.keyToId(key)
+        val result = map[id]
+        if(result == null) {
+            return KeyMapperService.Get.NotFound(key)
         } else {
-            KeyMapperService.Get.NotFound(key)
+            return KeyMapperService.Get.Link(result)
         }
+    }
 }
