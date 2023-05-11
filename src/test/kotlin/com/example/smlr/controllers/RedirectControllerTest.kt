@@ -1,27 +1,27 @@
 package com.example.smlr.controllers
 
+//import org.springframework.boot.test.SpringApplicationConfiguration
 import com.example.smlr.SmlrApplication
 import com.example.smlr.service.KeyMapperService
 import org.junit.Before
 import org.junit.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.context.WebApplicationContext
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-//import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.MockMvcBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.web.context.WebApplicationContext
 
+@TestPropertySource(locations = ["classpath:repositories-test.properties"])
 @RunWith(SpringJUnit4ClassRunner::class)
 //@SpringApplicationConfiguration
 @SpringBootTest(classes = [SmlrApplication::class])
@@ -68,4 +68,9 @@ class RedirectControllerTest {
             .andExpect(status().`is`(NOT_FOUND))
     }
 
+    @Test
+    fun homeWorksFine() {
+        mockMvc.perform(get("/"))
+            .andExpect(view().name("home"))
+    }
 }

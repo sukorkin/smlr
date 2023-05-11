@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
-@RequestMapping("/{key}")
+@RequestMapping()
 class RedirectController {
 
     @Autowired
@@ -18,7 +18,10 @@ class RedirectController {
         private val HEADER_NAME = "Location"
     }
 
-    @RequestMapping()
+    @RequestMapping("/")
+    fun home() = "home"
+
+    @RequestMapping("/{key}")
     fun redirect(@PathVariable("key") key: String, response: HttpServletResponse) {
         val result = sevice.getLink(key)
         when (result) {
