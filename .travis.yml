@@ -1,0 +1,6 @@
+language: java
+jdk: oraclejdk17
+
+notifications:
+  email:
+    - su.korkin@ya.ru
